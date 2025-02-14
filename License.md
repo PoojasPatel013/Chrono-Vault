@@ -2,7 +2,7 @@ Copyright (c) 2025 POOJA PATEL.
 
 All rights reserved.
 
-This source code and associated files are the intellectual property of [Your Name or Organization]
+This source code and associated files are the intellectual property of Chrono-Vault.
 and are protected by copyright law. Unauthorized use, reproduction, distribution, or modification
 of this code, in whole or in part, is strictly prohibited without the express written consent
 of the copyright owner.
