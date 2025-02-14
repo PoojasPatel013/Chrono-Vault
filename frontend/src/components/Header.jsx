@@ -1,25 +1,38 @@
-import { useState, useEffect } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const location = useLocation()
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+      setIsScrolled(window.scrollY > 50);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const headerVariants = {
+    hidden: { y: -100 },
+    visible: { y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } },
+  };
+
+  const menuItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
+  };
 
   return (
-    <header
+    <motion.header
+      initial="hidden"
+      animate="visible"
+      variants={headerVariants}
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? "py-4 bg-black/90 backdrop-blur-sm" : "py-6 bg-transparent"
+        isScrolled ? "py-2 bg-black/90 backdrop-blur-sm" : "py-4 bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -29,10 +42,18 @@ const Header = () => {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink to="/community">Community</NavLink>
-            <NavLink to="/personality-test">Personality Test</NavLink>
-            <NavLink to="/ai-therapy">AI Therapy</NavLink>
-            <NavLink to="/book-therapist">Book Therapist</NavLink>
+            <NavLink to="/community" variants={menuItemVariants}>
+              Community
+            </NavLink>
+            <NavLink to="/personality-test" variants={menuItemVariants}>
+              Personality Test
+            </NavLink>
+            <NavLink to="/ai-therapy" variants={menuItemVariants}>
+              AI Therapy
+            </NavLink>
+            <NavLink to="/book-therapist" variants={menuItemVariants}>
+              Book Therapist
+            </NavLink>
             <div className="flex items-center space-x-4">
               <Link
                 to="/login"
@@ -49,7 +70,11 @@ const Header = () => {
             </div>
           </div>
 
-          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-white focus:outline-none">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden text-white focus:outline-none"
+            aria-label="Toggle menu"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -72,16 +97,16 @@ const Header = () => {
             className="md:hidden bg-black/95 backdrop-blur-sm"
           >
             <div className="container mx-auto px-4 py-6 space-y-4">
-              <NavLink to="/community" onClick={() => setIsOpen(false)}>
+              <NavLink to="/community" onClick={() => setIsOpen(false)} variants={menuItemVariants}>
                 Community
               </NavLink>
-              <NavLink to="/personality-test" onClick={() => setIsOpen(false)}>
+              <NavLink to="/personality-test" onClick={() => setIsOpen(false)} variants={menuItemVariants}>
                 Personality Test
               </NavLink>
-              <NavLink to="/ai-therapy" onClick={() => setIsOpen(false)}>
+              <NavLink to="/ai-therapy" onClick={() => setIsOpen(false)} variants={menuItemVariants}>
                 AI Therapy
               </NavLink>
-              <NavLink to="/book-therapist" onClick={() => setIsOpen(false)}>
+              <NavLink to="/book-therapist" onClick={() => setIsOpen(false)} variants={menuItemVariants}>
                 Book Therapist
               </NavLink>
               <div className="pt-4 space-y-4">
@@ -104,26 +129,27 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
-  )
-}
+    </motion.header>
+  );
+};
 
-const NavLink = ({ to, children, onClick }) => {
-  const location = useLocation()
-  const isActive = location.pathname === to
+const NavLink = ({ to, children, onClick, variants }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
 
   return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className={`block text-lg md:text-sm font-medium transition-colors ${
-        isActive ? "text-white" : "text-gray-400 hover:text-white"
-      }`}
-    >
-      {children}
-    </Link>
-  )
-}
+    <motion.div variants={variants}>
+      <Link
+        to={to}
+        onClick={onClick}
+        className={`block text-lg md:text-sm font-medium transition-colors ${
+          isActive ? "text-white" : "text-gray-400 hover:text-white"
+        }`}
+      >
+        {children}
+      </Link>
+    </motion.div>
+  );
+};
 
-export default Header
-
+export default Header;

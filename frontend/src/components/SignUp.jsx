@@ -1,87 +1,137 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom"
+import React from "react"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
 
 const SignUp = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError("")
+    setLoading(true)
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || "Signup failed");
+        throw new Error(data.message || "Signup failed")
       }
 
-      console.log("Signup successful! Please log in.");
-      window.location.href = "/login"; // Redirect to login page
+      navigate("/login")
     } catch (error) {
-      setError(error.message);
+      setError(error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  
   return (
-    <div className="max-w-md mx-auto bg-gray-800 rounded shadow-md p-6">
-      <h2 className="text-2xl font-bold text-white mb-4">Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-400 text-sm font-bold mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white"
-            required
-          />
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full space-y-8"
+      >
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Create your account</h2>
         </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block text-gray-400 text-sm font-bold mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-white text-black px-4 py-2 rounded-full font-semibold hover:bg-gray-200 transition duration-300"
-          disabled={loading}
-        >
-          {loading ? "Signing up..." : "Sign Up"}
-        </button>
-      </form>
-      <div className="mt-6 text-center">
-        <p className="text-gray-400">
-          Already have an account?{" "}
-          <Link to="/login" className="text-white hover:underline">
-            Log in
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <input type="hidden" name="remember" defaultValue="true" />
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="username" className="sr-only">
+                Username
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {loading ? (
+                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : (
+                "Sign up"
+              )}
+            </button>
+          </div>
+        </form>
+        {error && (
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-center text-sm text-red-600">
+            {error}
+          </motion.p>
+        )}
+        <div className="text-center">
+          <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Already have an account? Sign in
           </Link>
-        </p>
-      </div>
+        </div>
+      </motion.div>
     </div>
   )
 }
