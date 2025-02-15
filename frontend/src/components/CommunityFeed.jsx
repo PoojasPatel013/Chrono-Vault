@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -5,9 +7,10 @@ const CommunityFeed = () => {
   const [capsules, setCapsules] = useState([]);
   const [publicSessions, setPublicSessions] = useState([]);
   const [credits, setCredits] = useState(0);
+  const [appUpdates, setAppUpdates] = useState([]);
 
   useEffect(() => {
-    // Fetch public capsules and sessions from the backend
+    // Fetch public capsules, sessions, and app updates from the backend
     const fetchData = async () => {
       // Simulated API calls
       const capsulesResponse = await fetch("/api/timecapsules/public");
@@ -18,9 +21,13 @@ const CommunityFeed = () => {
       const sessionsData = await sessionsResponse.json();
       setPublicSessions(sessionsData);
 
-      const creditsResponse = await fetch("/api/user/credits");
+      const creditsResponse = await fetch("/api/user");
       const creditsData = await creditsResponse.json();
       setCredits(creditsData.credits);
+
+      const updatesResponse = await fetch("/api/app-updates");
+      const updatesData = await updatesResponse.json();
+      setAppUpdates(updatesData);
     };
 
     fetchData();
@@ -43,29 +50,50 @@ const CommunityFeed = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="col-span-2"
+            className="col-span-2 space-y-8"
           >
-            <h2 className="text-2xl font-semibold mb-4">Public Capsules</h2>
-            <div className="space-y-4">
-              {capsules.map((capsule) => (
-                <motion.div
-                  key={capsule.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-gray-800 p-4 rounded-lg shadow-md"
-                >
-                  <p className="text-lg mb-2">{capsule.content}</p>
-                  <div className="flex justify-between text-sm text-gray-400">
-                    <span>By {capsule.createdBy}</span>
-                    <span>{new Date(capsule.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <div className="mt-2 flex justify-between text-sm">
-                    <span>❤️ {capsule.likes}</span>
-                    <span>💬 {capsule.comments}</span>
-                  </div>
-                </motion.div>
-              ))}
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Public Capsules</h2>
+              <div className="space-y-4">
+                {capsules.map((capsule) => (
+                  <motion.div
+                    key={capsule.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-gray-800 p-4 rounded-lg shadow-md"
+                  >
+                    <p className="text-lg mb-2">{capsule.content}</p>
+                    <div className="flex justify-between text-sm text-gray-400">
+                      <span>By {capsule.createdBy}</span>
+                      <span>{new Date(capsule.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div className="mt-2 flex justify-between text-sm">
+                      <span>❤️ {capsule.likes}</span>
+                      <span>💬 {capsule.comments}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">App Updates</h2>
+              <div className="space-y-4">
+                {appUpdates.map((update) => (
+                  <motion.div
+                    key={update.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-gray-800 p-4 rounded-lg shadow-md"
+                  >
+                    <h3 className="text-lg font-semibold mb-2">{update.title}</h3>
+                    <p className="text-sm text-gray-300 mb-2">{update.description}</p>
+                    <p className="text-xs text-gray-400">Released on {new Date(update.date).toLocaleDateString()}</p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
 

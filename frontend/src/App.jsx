@@ -18,11 +18,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/timecapsule" element={<TimeCapsule />} />
+          <Route path="/time-capsule" element={<TimeCapsule />} />
           <Route path="/community" element={<CommunityFeed />} />
           <Route path="/personality-test" element={<PersonalityTest />} />
           <Route path="/ai-therapy" element={<AITherapy />} />
-          <Route path="/book-therapist" element={<TherapistBooking />} />
+          <Route path="/book-session" element={<TherapistBooking />} />
         </Routes>
       </div>
     </Router>
