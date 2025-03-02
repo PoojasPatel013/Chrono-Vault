@@ -1,10 +1,11 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize Gemini AI
+// ✅ Initialize Google Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-router.post('/ai-session', async (req, res) => {
+
+router.post("/ai-session", async (req, res) => {
   try {
     const { message } = req.body;
 
@@ -12,20 +13,17 @@ router.post('/ai-session', async (req, res) => {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    // Prepare the prompt for Gemini
-    const prompt = `You are a supportive and empathetic AI therapist. Respond to the following message from a client:
-    
-    Client: ${message}
-    
-    Provide a thoughtful and helpful response as a therapist would. Be empathetic, offer support, and suggest constructive ways to address any concerns or issues mentioned.`;
+    // 🔹 Use the correct model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    // ✅ API Call to Gemini
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const result = await model.generateContent({ contents: [{ role: "user", parts: [{ text: prompt }] }] });
+    // ✅ Send request to Gemini
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: message }] }],
+    });
 
     console.log("✅ AI API Raw Response:", JSON.stringify(result, null, 2));
 
-    // ✅ Corrected Response Extraction
+    // ✅ Fix response extraction
     const response = result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!response) {
